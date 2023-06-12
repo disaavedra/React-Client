@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const djangoApi = axios.create({
-  baseURL: 'https://web-django-api.herokuapp.com/api/v1/'
+  baseURL: 'https://web-django-api.herokuapp.com/api/v1'
 });
 
 export const getEvaluation = (id: any) => {
