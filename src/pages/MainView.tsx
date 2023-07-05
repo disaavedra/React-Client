@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import {getEvaluation, getPersons, getGroup} from '../api/evaluations.api'
+import {getEvaluation, getPersons} from '../api/evaluations.api'
 import { useState, useEffect } from 'react';
 import '../styles.css';
 
