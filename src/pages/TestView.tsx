@@ -1,4 +1,4 @@
-import { getTest } from '../api/evaluations.api';
+import { getTest, postResult, getComplete } from '../api/evaluations.api';
 import { useState, useEffect } from 'react';
 import '../styles.css';
 
@@ -7,6 +7,8 @@ interface Pregunta {
     orden: string;
     enunciados: Enunciado[];
     tipo: string;
+    dificultad: string;
+    tags: string;
 }
 
 interface Enunciado {
@@ -24,8 +26,11 @@ interface Alternativa {
 
 function TestView() {
   const savedIdTest = localStorage.getItem('id_test');
-  const [preguntas, setPreguntas] = useState<Pregunta[]>([]);
+  const savedIdGroup = localStorage.getItem('id_group');
+  const savedIdUsuario = localStorage.getItem('id_usuario');
+  const savedIdEvaluacion = localStorage.getItem('id_evaluacion');
 
+  const [preguntas, setPreguntas] = useState<Pregunta[]>([]);
   const [indicePregunta, setIndicePregunta] = useState<number>(() => {
         const savedIndex = localStorage.getItem('current_index');
         return savedIndex ? parseInt(savedIndex) : 0;
@@ -50,10 +55,27 @@ function TestView() {
         localStorage.setItem('current_index', (indicePregunta + 1).toString());
   }, [indicePregunta]);
 
+  useEffect(() => {
+    const obtenerCompletado = async () => {
+      try {
+        const response = await getComplete(savedIdUsuario, savedIdEvaluacion);
+        console.log('Completado:', response.data.completado);
+      } catch (error) {
+        // Manejar el error de recuperación del estado de completado
+      }
+    };
+
+    obtenerCompletado();
+  }, [savedIdUsuario, savedIdEvaluacion]);
+
   const handleRespuesta = (esCorrecta: boolean) => {
         if (esCorrecta) {
         setRespuestasCorrectas(respuestasCorrectas + 1);
             }
+        console.log(preguntaActual)
+        console.log(preguntaActual.dificultad)
+        console.log(preguntaActual.tags)
+        postResult(savedIdUsuario, savedIdGroup, preguntaActual.id, savedIdEvaluacion, esCorrecta, preguntaActual.dificultad, preguntaActual.tags);
         setIndicePregunta(indice => indice + 1);
   };
 
